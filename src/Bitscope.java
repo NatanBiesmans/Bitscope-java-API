@@ -42,7 +42,7 @@ public class Bitscope {
 		return control.request_mixed_memory_dump();
 	}
 
-	public String request_analog_memory_dump() {
+	public byte[] request_analog_memory_dump() {
 		return control.request_analog_memory_dump();
 	}
 

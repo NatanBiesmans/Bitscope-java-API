@@ -27,8 +27,8 @@ public class Bitscope_control {
 		return comPort.send_string_and_wait_for_response_as_string("M");
 	}
 
-	public String request_analog_memory_dump() {
-		return comPort.send_string_and_wait_for_response_as_string("A");
+	public byte[] request_analog_memory_dump() {
+		return comPort.send_string_and_wait_for_response_as_bytes("A");
 	}
 
 	public void reset_VM() {

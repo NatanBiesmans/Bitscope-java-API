@@ -45,14 +45,14 @@ public class Comport_interface {
 		}
 	}
 	
-	public String send_string_and_wait_for_response_as_byte(String to_send_string) {
+	public byte[] send_string_and_wait_for_response_as_bytes(String to_send_string) {
 		comPort.writeBytes(to_send_string.getBytes(), to_send_string.getBytes().length);
 		try {
 			wait_for_response(1);
 			byte[] readBuffer = read_comport();
-			return process_readBuffer(readBuffer);
+			return readBuffer;
 		} catch (Exception e) {
-			return "";
+			return null;
 		}
 	}
 

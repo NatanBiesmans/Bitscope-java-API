@@ -12,6 +12,8 @@ public class Bitscope {
 	private void Bitscope_init(String port, int baudRate) {
 		comPort = new Comport_interface(port, baudRate);
 		comPort.open_comPort();
+		
+		
 
 		registers = new Bitscope_registers();
 		debugger = new Bitscope_debugging(registers, comPort);
@@ -21,7 +23,13 @@ public class Bitscope {
 	public void close_bitscope() {
 		comPort.close_comport();
 	}
-
+	
+	//COM functions
+	public String[] get_available_comports(){
+		return comPort.get_available_comports();
+	}
+	
+	//scope functions
 	public String trace_until_trigger() {
 		return control.trace_until_trigger();
 	}
@@ -183,6 +191,7 @@ public class Bitscope {
 		control.set_secundary_attenuation_range(range_in_volts_with_probe_scaling, probe_scaling_is_10_times);
 	}
 
+	
 	// Frequency measurement registers
 
 		// TODO

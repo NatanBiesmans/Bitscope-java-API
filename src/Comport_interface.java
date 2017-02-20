@@ -57,10 +57,13 @@ public class Comport_interface {
 	}
 
 	// comport debugging
-	public void print_comports() {
+	public String[] get_available_comports() {
+		String[] comports_string = new String[SerialPort.getCommPorts().length];
+		int comport_index = 0;
 		for (SerialPort available_port : SerialPort.getCommPorts()) {
-			System.out.println(available_port.getDescriptivePortName());
+			comports_string[comport_index++] = available_port.getDescriptivePortName();
 		}
+		return comports_string;
 	}
 
 	// private calls

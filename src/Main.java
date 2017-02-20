@@ -1,9 +1,10 @@
 public class Main {
 
 	public static void main(String[] args) {
+
 		Bitscope scope = new Bitscope("COM3", 250000);
-		
-		//setup
+
+		// setup
 		scope.set_page_to_lower();
 		scope.set_trigger_type_to_edge_sensitive();
 		scope.set_edge_direction_from_false_to_true();
@@ -14,36 +15,34 @@ public class Main {
 		scope.set_post_trigger_delay(0x0f00);
 		scope.set_primary_channel_channel_select(true);
 		scope.set_primary_attenuation_range(3.16, false);
-		
+
 		scope.upload_registers_to_bitscope();
-		
-		//trace
+
+		// trace
 		scope.trace_until_trigger();
-		
+
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//Acquire
+
+		// Acquire
 		byte[] dump = scope.request_analog_memory_dump();
 		int[] dump_int = bytearray2intarray(dump);
-		for(int dump_element: dump_int){ 
+		for (int dump_element : dump_int) {
 			System.out.println(dump_element);
 		}
-		
+
 		scope.close_bitscope();
 	}
-	
-	public static int[] bytearray2intarray(byte[] barray)
-	 {
-	   int[] iarray = new int[barray.length];
-	   int i = 0;
-	   for (byte b : barray)
-	       iarray[i++] = b & 0xff;
-	   return iarray;
-	 }
-}
 
+	public static int[] bytearray2intarray(byte[] barray) {
+		int[] iarray = new int[barray.length];
+		int i = 0;
+		for (byte b : barray)
+			iarray[i++] = b & 0xff;
+		return iarray;
+	}
+}

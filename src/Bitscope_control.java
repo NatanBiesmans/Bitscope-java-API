@@ -38,7 +38,7 @@ public class Bitscope_control {
 	public String get_revision() {
 		return comPort.send_string_and_wait_for_response_as_string("?");
 	}
-	
+
 	public void set_trigger_type_to_level_sensitive() {
 		registers.getSpock_option().unset_bit(5);
 	}
@@ -91,10 +91,10 @@ public class Bitscope_control {
 		registers.getSpock_option().set_bit(2);
 	}
 
-	public void set_post_trigger_delay(int delay){
+	public void set_post_trigger_delay(int delay) {
 		registers.set_post_trigger_delay(delay);
 	}
-	
+
 	// trigger logic
 	public void use_analog_trigger() {
 		registers.getTrigger_mask().load_value(0xff);
@@ -146,8 +146,71 @@ public class Bitscope_control {
 	public void set_logic_trace_mode(int logic_trace_mode_value) {
 		registers.getLogic_trace_mode_select().load_value(logic_trace_mode_value);
 	}
-	
-	public void upload_registers_to_bitscope(){
+
+	public void upload_registers_to_bitscope() {
 		comPort.send_string(registers.make_setup_string());
 	}
+
+	// input and attenuation functions
+	public void set_primary_channel_channel_select(boolean channel_A_or_not_channel_B) {
+		if (channel_A_or_not_channel_B) {
+			registers.getIntput_attenuation().set_bit(2);
+		} else {
+			registers.getIntput_attenuation().unset_bit(2);
+		}
+	}
+
+	public void set_secundary_channel_channel_select(boolean channel_A_or_not_channel_B) {
+		if (channel_A_or_not_channel_B) {
+			registers.getIntput_attenuation().set_bit(6);
+		} else {
+			registers.getIntput_attenuation().unset_bit(6);
+		}
+	}
+
+	public void set_primary_attenuation_range(double range_in_volts_with_probe_scaling,
+			boolean probe_scaling_is_10_times) {
+		if (probe_scaling_is_10_times) {
+			range_in_volts_with_probe_scaling /= 10;
+		}
+
+		if (range_in_volts_with_probe_scaling <= 3.16) {
+			registers.getIntput_attenuation().unset_bit(0);
+			registers.getIntput_attenuation().unset_bit(1);
+		} else if (range_in_volts_with_probe_scaling <= 1.20) {
+			registers.getIntput_attenuation().set_bit(0);
+			registers.getIntput_attenuation().unset_bit(1);
+		} else if (range_in_volts_with_probe_scaling <= 0.600) {
+			registers.getIntput_attenuation().unset_bit(0);
+			registers.getIntput_attenuation().set_bit(1);
+		} else if (range_in_volts_with_probe_scaling <= 0.130) {
+			registers.getIntput_attenuation().set_bit(0);
+			registers.getIntput_attenuation().set_bit(1);
+		}
+
+	}
+
+	public void set_secundary_attenuation_range(double range_in_volts_with_probe_scaling,
+			boolean probe_scaling_is_10_times) {
+		if (probe_scaling_is_10_times) {
+			range_in_volts_with_probe_scaling /= 10;
+		}
+
+		if (range_in_volts_with_probe_scaling <= 3.16) {
+			registers.getIntput_attenuation().unset_bit(4);
+			registers.getIntput_attenuation().unset_bit(5);
+		} else if (range_in_volts_with_probe_scaling <= 1.20) {
+			registers.getIntput_attenuation().set_bit(4);
+			registers.getIntput_attenuation().unset_bit(5);
+		} else if (range_in_volts_with_probe_scaling <= 0.600) {
+			registers.getIntput_attenuation().unset_bit(4);
+			registers.getIntput_attenuation().set_bit(5);
+		} else if (range_in_volts_with_probe_scaling <= 0.130) {
+			registers.getIntput_attenuation().set_bit(4);
+			registers.getIntput_attenuation().set_bit(5);
+		}
+
+	}
+	
+	
 }

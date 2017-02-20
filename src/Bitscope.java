@@ -161,6 +161,27 @@ public class Bitscope {
 	public void set_post_trigger_delay(int delay){
 		control.set_post_trigger_delay(delay);
 	}
+	
+	//input and attenuation
+	
+	public void set_primary_channel_channel_select(boolean channel_A_or_not_channel_B) {
+		control.set_primary_channel_channel_select(channel_A_or_not_channel_B);
+
+	}
+
+	public void set_secundary_channel_channel_select(boolean channel_A_or_not_channel_B) {
+		control.set_secundary_channel_channel_select(channel_A_or_not_channel_B);
+	}
+
+	public void set_primary_attenuation_range(double range_in_volts_with_probe_scaling,
+			boolean probe_scaling_is_10_times) {
+		control.set_primary_attenuation_range(range_in_volts_with_probe_scaling, probe_scaling_is_10_times);
+	}
+
+	public void set_secundary_attenuation_range(double range_in_volts_with_probe_scaling,
+			boolean probe_scaling_is_10_times) {
+		control.set_secundary_attenuation_range(range_in_volts_with_probe_scaling, probe_scaling_is_10_times);
+	}
 
 	// Frequency measurement registers
 

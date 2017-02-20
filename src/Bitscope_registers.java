@@ -54,7 +54,7 @@ public class Bitscope_registers {
 	private Register logic_sample_rate = new Register(0x00, 47);
 
 	public Bitscope_registers() {
-		// nothin yet
+		intput_attenuation.load_value(0x88); //zz-clock level should always be set to one
 	}
 
 	// simple getter and setters

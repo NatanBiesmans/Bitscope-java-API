@@ -12,6 +12,8 @@ public class Main {
 		scope.use_analog_trigger();
 		scope.set_dump_size(0xff);
 		scope.set_post_trigger_delay(0x0f00);
+		scope.set_primary_channel_channel_select(true);
+		scope.set_primary_attenuation_range(3.16, false);
 		
 		scope.upload_registers_to_bitscope();
 		
@@ -25,7 +27,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		//aqcuire
+		//Acquire
 		byte[] dump = scope.request_analog_memory_dump();
 		int[] dump_int = bytearray2intarray(dump);
 		for(int dump_element: dump_int){ 

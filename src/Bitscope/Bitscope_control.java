@@ -22,28 +22,33 @@ public class Bitscope_control {
 	}
 
 	// capture engine operations
+
+	public void update_registers_command() {
+		comPort.send_string_and_wait_for_response_as_string("U");
+	}
+
 	public void capture_spock_counter_operation() {
-		comPort.send_string("<");
+		comPort.send_string_and_wait_for_response_as_string("<");
 	}
 
 	public void program_spock_registers_operation() {
-		comPort.send_string(">");
+		comPort.send_string_and_wait_for_response_as_string(">");
 	}
 
 	public void trace_until_trigger_operation() {
-		comPort.send_string("T");
+		comPort.send_string_and_wait_for_response_as_string("T");
 	}
 
-	public void delay_until_trigger_operation() {
-		comPort.send_string("D");
+	public String delay_until_trigger_operation() {
+		return comPort.send_string_and_wait_for_response_as_string("D");
 	}
 
 	public void trace_logic_until_trigger_operation() {
-		comPort.send_string("T");
+		comPort.send_string_and_wait_for_response_as_string("T");
 	}
 
 	public void update_RAM_pointers_operation() {
-		comPort.send_string("u");
+		comPort.send_string_and_wait_for_response_as_string("u");
 	}
 
 	public String sample_dump_operation() {
@@ -56,6 +61,10 @@ public class Bitscope_control {
 
 	public byte[] analog_memory_dump_operation() {
 		return comPort.send_string_and_wait_for_response_as_bytes("A");
+	}
+
+	public void update_registers_on_bitscope() {
+		comPort.send_string_and_wait_for_response_as_string(registers.create_setup_string() + ">");
 	}
 
 	// eeprom operations

@@ -20,6 +20,11 @@ public class Bitscope_library_control {
 		//system setup
 		debugger = new Bitscope_debugging(comPort, registers);
 		control = new Bitscope_control(comPort, registers);
+		control.reset_bitscope();
+	}
+	
+	public void close_comport(){
+		comPort.close_comport();
 	}
 
 	public Comport_interface getComport() {

@@ -5,9 +5,9 @@ public class Register {
 	private int register_address = 0x00;
 	boolean update_pending = false;
 
-	public Register(int register_value, int register_address) {
+	public Register(int register_address, int register_value) {
 		this.register_value = register_value;
-		this.setRegister_address(register_address);
+		this.register_address = register_address;
 		this.update_pending = true;
 	}
 

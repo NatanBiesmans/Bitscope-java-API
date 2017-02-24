@@ -23,9 +23,9 @@ public class Bitscope_registers {
 
 	private Register trace_mode = new Register(0x21, 0x00);
 
-	private Register spock_option_byte0 = new Register(0x08, 0x00);
-	private Register spock_option_byte1 = new Register(0x09, 0x00);
-	private Register spock_option_byte2 = new Register(0x0a, 0x00);
+	private Register counter_capture_byte0 = new Register(0x08, 0x00);	
+	private Register counter_capture_byte1 = new Register(0x09, 0x00);
+	private Register counter_capture_byte2 = new Register(0x0a, 0x00);
 
 	private Register iterations_byte0 = new Register(0x16, 0x00);
 	private Register iterations_byte1 = new Register(0x17, 0x00);
@@ -141,16 +141,12 @@ public class Bitscope_registers {
 		return trace_mode;
 	}
 
-	public Register getSpock_option_byte0() {
-		return spock_option_byte0;
+	public Register getCounter_capture_byte0() {
+		return counter_capture_byte0;
 	}
 
-	public Register getSpock_option_byte1() {
-		return spock_option_byte1;
-	}
-
-	public Register getSpock_option_byte2() {
-		return spock_option_byte2;
+	public Register getCounter_capture_byte1() {
+		return counter_capture_byte1;
 	}
 
 	public Register getIterations_byte0() {
@@ -349,10 +345,10 @@ public class Bitscope_registers {
 		trigger_value_byte1.load_value(get_higher_bytes(load_value));
 	}
 
-	public void load_in_spock_option_address(int load_value) {
-		spock_option_byte0.load_value(get_lower_byte(load_value));
-		spock_option_byte1.load_value(get_lower_byte(get_higher_bytes(load_value)));
-		spock_option_byte2.load_value(get_lower_byte(get_higher_bytes(get_higher_bytes(load_value))));
+	public void load_in_counter_capture_address(int load_value) {
+		counter_capture_byte0.load_value(get_lower_byte(load_value));
+		counter_capture_byte1.load_value(get_lower_byte(get_higher_bytes(load_value)));
+		counter_capture_byte2.load_value(get_lower_byte(get_higher_bytes(get_higher_bytes(load_value))));
 	}
 
 	public void load_trigger_checking_delay_period(int load_value) {
@@ -435,9 +431,9 @@ public class Bitscope_registers {
 		setup_string += make_load_string_for_register(dump_size_byte1);
 		setup_string += make_load_string_for_register(dump_mode);
 		setup_string += make_load_string_for_register(trace_mode);
-		setup_string += make_load_string_for_register(spock_option_byte0);
-		setup_string += make_load_string_for_register(spock_option_byte1);
-		setup_string += make_load_string_for_register(spock_option_byte2);
+		setup_string += make_load_string_for_register(counter_capture_byte0);
+		setup_string += make_load_string_for_register(counter_capture_byte1);
+		setup_string += make_load_string_for_register(counter_capture_byte2);
 		setup_string += make_load_string_for_register(iterations_byte0);
 		setup_string += make_load_string_for_register(iterations_byte1);
 		setup_string += make_load_string_for_register(post_trigger_capture_byte0);
@@ -482,9 +478,7 @@ public class Bitscope_registers {
 
 	// private functions
 	private String make_load_string_for_register(Register register) {
-		String formatted_string = "[" + String.format("%02x", register.getRegister_address()) + "]@["
-				+ String.format("%02x", register.getRegister_value()) + "]s";
-		return formatted_string;
+		return String.format("[%02x]@[%02x]s", register.getRegister_address(),register.getRegister_value());
 	}
 
 	private int get_lower_byte(int value) {

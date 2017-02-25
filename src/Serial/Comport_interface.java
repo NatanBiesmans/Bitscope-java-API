@@ -33,12 +33,12 @@ public class Comport_interface {
 
 	// comport communication
 	public void send_string(String to_send_string) {
-		System.out.println(to_send_string);
+		//System.out.println(to_send_string);
 		comPort.writeBytes(to_send_string.getBytes(), to_send_string.getBytes().length);
 	}
 
 	public String send_string_and_wait_for_response_as_string(String to_send_string) {
-		System.out.println(to_send_string);
+		//System.out.println(to_send_string);
 		comPort.writeBytes(to_send_string.getBytes(), to_send_string.getBytes().length);
 		try {
 			wait_for_response(300);
@@ -50,7 +50,7 @@ public class Comport_interface {
 	}
 
 	public byte[] send_string_and_wait_for_response_as_bytes(String to_send_string) {
-		System.out.println(to_send_string);
+		//System.out.println(to_send_string);
 		comPort.writeBytes(to_send_string.getBytes(), to_send_string.getBytes().length);
 		try {
 			wait_for_response(300);

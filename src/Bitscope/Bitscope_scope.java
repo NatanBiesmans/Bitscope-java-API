@@ -73,13 +73,7 @@ public class Bitscope_scope {
 		double scale = high_peak_voltage - low_peak_voltage;
 		double offset = low_peak_voltage + (scale / 2);
 
-		int[] voltage_registers_values = to_span(offset, scale); // index 0 =
-																	// higher
-																	// value,
-																	// index 1 =
-																	// lower
-																	// value
-
+		int[] voltage_registers_values = to_span(offset, scale);
 		registers.load_Higher_voltage_range(voltage_registers_values[0]);
 		registers.load_Lower_voltage_range(voltage_registers_values[1]);
 
@@ -110,9 +104,7 @@ public class Bitscope_scope {
 	public double[] get_view_in_voltages() {
 		initialise_request();
 
-		process_data(acquire_data());
-
-		return null;
+		return process_data(acquire_data());
 	}
 
 	// private acquisition functions
@@ -130,13 +122,17 @@ public class Bitscope_scope {
 	}
 
 	private double[] process_data(byte[] acquired_data) {
-		byte[] processed_acquired_data = process_trace(acquired_data);
+		byte[] acquired_trace = process_trace(acquired_data);
+		double[] processed_trace_in_voltages = new double[acquired_trace.length];
 
-		for (byte sample : processed_acquired_data) {
-			System.out.println(String.format("%02x", sample));
+		int sample_index = 0;
+		for (byte sample : acquired_trace) {
+			processed_trace_in_voltages[sample_index] = to_range_as_double((double) (sample & 0xff) - 127, 0, 255,
+					lower_range_voltage * 2, higher_range_voltage * 2);
+			sample_index++;
 		}
 
-		return null;
+		return processed_trace_in_voltages;
 
 	}
 
@@ -154,9 +150,7 @@ public class Bitscope_scope {
 		return Integer.parseInt(end_address_strings, 16);
 	}
 
-	private int[] to_span(double offset, double scale) {// index 0 = higher
-														// value, index 1 =
-														// lower value
+	private int[] to_span(double offset, double scale) {
 
 		double minimum_impedance = 16.0;
 		double impedance_scaling = 12.0;
@@ -185,7 +179,7 @@ public class Bitscope_scope {
 
 		int[] output = { register_value_high, register_value_low };
 
-		return output;// index 0 = higher value, index 1 = lower value
+		return output;
 	}
 
 	private double ensure_range(double value, double minimum, double maximum) {
@@ -196,8 +190,17 @@ public class Bitscope_scope {
 		} else if (value >= maximum) {
 			return maximum;
 		} else {
-			return 0.0; // shouldn't happen
+			return minimum; // shouldn't happen, just JAVA being careful
 		}
+	}
+
+	private double to_range_as_double(double to_convert_value, double lower_limit_of_to_convert_value,
+			double upper_limit_of_to_convert_value, double lower_limit_of_output_value,
+			double upper_limit_of_output_value) {
+
+		double slope_coef = (upper_limit_of_output_value - lower_limit_of_output_value)
+				/ (upper_limit_of_to_convert_value - lower_limit_of_to_convert_value);
+		return lower_limit_of_output_value + (slope_coef * (to_convert_value - lower_limit_of_to_convert_value));
 	}
 
 	private int to_range_as_integer(double to_convert_value, double lower_limit_of_to_convert_value,

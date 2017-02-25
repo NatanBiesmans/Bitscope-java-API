@@ -478,7 +478,12 @@ public class Bitscope_registers {
 
 	// private functions
 	private String make_load_string_for_register(Register register) {
-		return String.format("[%02x]@[%02x]s", register.getRegister_address(),register.getRegister_value());
+		if(register.get_update_pending()){
+			register.unset_update_pending();
+			return String.format("[%02x]@[%02x]s", register.getRegister_address(),register.getRegister_value());
+		} else {
+			return "";
+		}
 	}
 
 	private int get_lower_byte(int value) {

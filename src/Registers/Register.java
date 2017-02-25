@@ -23,14 +23,17 @@ public class Register {
 
 	// register value
 	public void set_bit(int bit_index) {
+		this.update_pending = true;
 		register_value = register_value | (1 << bit_index);
 	}
 
 	public void unset_bit(int bit_index) {
+		this.update_pending = true;
 		register_value = register_value & ~(1 << bit_index);
 	}
 
 	public void load_value(int to_load_register) {
+		this.update_pending = true;
 		register_value = to_load_register;
 	}
 

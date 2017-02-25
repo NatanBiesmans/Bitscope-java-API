@@ -9,9 +9,9 @@ Check the Main.java in order to see the example code.
 Working:
 - print hex values of trace
 - select channel
+- Set voltage range
 
 ToDo:
-- Set voltage range
 - Set timebase
 - Set trigger_level
 - Chop channels

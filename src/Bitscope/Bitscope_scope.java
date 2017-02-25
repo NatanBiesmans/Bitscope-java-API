@@ -91,6 +91,7 @@ public class Bitscope_scope {
 		registers.load_Trigger_level(to_range_as_integer(this.trigger_voltage, -7.157, 10.816, 0, 65535));
 
 		control.update_registers_on_bitscope();
+		control.update_registers_command();
 	}
 
 	public void set_timebase(int new_timebase) {
@@ -119,7 +120,6 @@ public class Bitscope_scope {
 	private byte[] acquire_data() {
 		registers.load_in_counter_capture_address(((end_address + (3 * 4096)) - 1028) % (3 * 4096));
 		control.update_registers_on_bitscope();
-		control.update_RAM_pointers_operation();
 		control.update_registers_command();
 		return control.analog_memory_dump_operation();
 	}
@@ -153,8 +153,6 @@ public class Bitscope_scope {
 														// value, index 1 =
 														// lower value
 
-		offset *= -1;
-
 		double minimum_impedance = 16.0;
 		double impedance_scaling = 12.0;
 		double divider_sesitor_value = 300.0;
@@ -162,12 +160,9 @@ public class Bitscope_scope {
 
 		double normalised_range = 18.3;
 		double normalised_offset = 0.41;
-		double ground = 0.0;
 
-		double high_ad_ref_voltage = ((normalised_offset - (offset - ground)) / normalised_range)
-				+ (scale / normalised_range) / 2;
-		double low_ad_ref_voltage = ((normalised_offset - (offset - ground)) / normalised_range)
-				- (scale / normalised_range) / 2;
+		double high_ad_ref_voltage = (normalised_offset - offset / normalised_range) + (scale / normalised_range) / 2;
+		double low_ad_ref_voltage = (normalised_offset - offset / normalised_range) - (scale / normalised_range) / 2;
 
 		double da_impedance_high = 2 * high_ad_ref_voltage;
 		da_impedance_high = minimum_impedance + impedance_scaling * da_impedance_high * da_impedance_high;

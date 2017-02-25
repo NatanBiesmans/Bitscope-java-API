@@ -462,6 +462,7 @@ public class Bitscope_registers {
 		return setup_string;
 	}
 
+
 	public String create_eeprom_write_string() {
 		return String.format("[%02x]@[%02x]s[%02x]@[%02x]s", eeprom_address.getRegister_address(),
 				eeprom_address.getRegister_value(), eeprom_data.getRegister_address(), eeprom_data.getRegister_value());

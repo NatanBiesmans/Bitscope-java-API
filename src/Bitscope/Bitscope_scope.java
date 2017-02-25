@@ -58,13 +58,21 @@ public class Bitscope_scope {
 	public void set_channel(Boolean channelA_not_channelB) {
 		if (channelA_not_channelB) {
 			registers.load_value_in_Analog_channel_enable(0x01);
-			registers.getSpock_option().set_bit(2);
 		} else {
 			registers.load_value_in_Analog_channel_enable(0x02);
-			registers.getSpock_option().unset_bit(2);
 		}
 
 		control.update_registers_on_bitscope();
+	}
+	
+	public void set_analog_trigger_source(boolean channelA_not_channelB){
+		if (channelA_not_channelB) {
+			registers.getSpock_option().unset_bit(2);
+		} else {
+			registers.getSpock_option().set_bit(2);
+		}
+
+		control.update_registers_on_bitscope();;
 	}
 
 	public void set_voltage_range(double high_peak_voltage, double low_peak_voltage) {
@@ -84,14 +92,13 @@ public class Bitscope_scope {
 	public void set_trigger(double trigger_voltage) {
 		this.trigger_voltage = trigger_voltage;
 		registers.load_Trigger_level(to_range_as_integer(this.trigger_voltage, -7.157, 10.816, 0, 65535));
-
-		control.update_registers_on_bitscope();
+	
 		control.update_registers_command();
 	}
 
 	public void set_timebase(double new_timebase_in_milliseconds) {
 
-		new_timebase_in_milliseconds = ensure_range(new_timebase_in_milliseconds, 0.385, 8);
+		new_timebase_in_milliseconds = ensure_range(new_timebase_in_milliseconds, 0.385, 12);
 		new_timebase_in_milliseconds /= 1024 * 25 * 0.000001;
 		this.timebase_value = (int) new_timebase_in_milliseconds;
 
@@ -107,6 +114,10 @@ public class Bitscope_scope {
 		return process_data(acquire_data());
 	}
 
+	public int get_sampeling_frequency(){
+		return 1024 / this.timebase_value;
+	}
+	
 	// private acquisition functions
 
 	private void initialise_request() {
@@ -158,7 +169,7 @@ public class Bitscope_scope {
 		double register_size = 65536;
 
 		double normalised_range = 18.3;
-		double normalised_offset = 0.41;
+		double normalised_offset = 0.412;
 
 		double high_ad_ref_voltage = (normalised_offset - offset / normalised_range) + (scale / normalised_range) / 2;
 		double low_ad_ref_voltage = (normalised_offset - offset / normalised_range) - (scale / normalised_range) / 2;

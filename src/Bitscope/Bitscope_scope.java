@@ -84,6 +84,7 @@ public class Bitscope_scope {
 		registers.load_Lower_voltage_range(voltage_registers_values[1]);
 
 		control.update_registers_on_bitscope();
+		control.update_registers_command();
 	}
 
 	public void set_trigger(double trigger_voltage) {
@@ -94,12 +95,16 @@ public class Bitscope_scope {
 		control.update_registers_command();
 	}
 
-	public void set_timebase(int new_timebase) {
-		this.timebase_value = new_timebase;
+	public void set_timebase(double new_timebase_in_milliseconds) {
+
+		new_timebase_in_milliseconds = ensure_range(new_timebase_in_milliseconds, 0.385, 8);
+		new_timebase_in_milliseconds /= 1024 * 25 * 0.000001;
+		this.timebase_value = (int) new_timebase_in_milliseconds;
 
 		registers.load_time_base_clock_ticks(this.timebase_value);
 
 		control.update_registers_on_bitscope();
+		control.update_registers_command();
 	}
 
 	public double[] get_view_in_voltages() {

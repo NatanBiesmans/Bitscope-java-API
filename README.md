@@ -10,9 +10,9 @@ Working:
 - print hex values of trace
 - select channel
 - Set voltage range
+- Set timebase
 
 ToDo:
-- Set timebase
 - Set trigger_level
 - Chop channels
 

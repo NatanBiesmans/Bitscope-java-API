@@ -2,6 +2,7 @@ package Registers;
 
 public class Bitscope_registers {
 
+	// ----SCOPE-----------------------------------------------------------------------------
 	private Register time_base_clock_ticks_byte0 = new Register(0x2e, 0x00);
 	private Register time_base_clock_ticks_byte1 = new Register(0x2f, 0x00);
 
@@ -65,6 +66,43 @@ public class Bitscope_registers {
 	// ----EEPROM----------------------------------------------------------------------------
 	private Register eeprom_data = new Register(0x0f, 0x00);
 	private Register eeprom_address = new Register(0x10, 0x00);
+
+	// ----AWG-------------------------------------------------------------------------------
+	private Register awg_control = new Register(0x7c, 0x00);
+	private Register clock_generator_control = new Register(0x86, 0x00);
+	private Register cv_operation_mode_byte0 = new Register(0x46, 0x00);
+	private Register cv_operation_mode_byte1 = new Register(0x47, 0x00);
+
+	private Register wave_phase_ratio_byte0 = new Register(0x5a, 0x00);
+	private Register wave_phase_ratio_byte1 = new Register(0x5b, 0x00);
+	private Register wave_size_byte0 = new Register(0x4a, 0x00);
+	private Register wave_size_byte1 = new Register(0x4b, 0x00);
+	private Register wave_index_byte0 = new Register(0x4c, 0x00);
+	private Register wave_index_byte1 = new Register(0x4d, 0x00);
+	private Register wave_address_byte0 = new Register(0x4e, 0x00);
+	private Register wave_address_byte1 = new Register(0x4f, 0x00);
+	private Register wave_level_byte0 = new Register(0x54, 0x00);
+	private Register wave_level_byte1 = new Register(0x55, 0x00);
+	private Register wave_offset_byte0 = new Register(0x56, 0x00);
+	private Register wave_offset_byte1 = new Register(0x57, 0x00);
+
+	private Register option_byte0 = new Register(0x5a, 0x00);
+	private Register option_byte1 = new Register(0x5b, 0x00);
+
+	private Register modulo_byte0 = new Register(0x5c, 0x00);
+	private Register modulo_byte1 = new Register(0x5d, 0x00);
+
+	private Register clock_ticks_byte0 = new Register(0x50, 0x00);
+	private Register clock_ticks_byte1 = new Register(0x51, 0x00);
+
+	private Register mark_byte0 = new Register(0x5e, 0x00);
+	private Register mark_byte1 = new Register(0x5f, 0x00);
+
+	private Register space_byte0 = new Register(0x60, 0x00);
+	private Register space_byte1 = new Register(0x61, 0x00);
+
+	private Register dac_output_byte0 = new Register(0x78, 0x00);
+	private Register dac_output_byte1 = new Register(0x79, 0x00);
 
 	public Bitscope_registers() {
 	}
@@ -412,9 +450,84 @@ public class Bitscope_registers {
 	public void spock_set_trigger_to_edge_sensitive() {
 		spock_option.set_bit(5);
 	}
+	// AWG registers
+
+	public void awg_control(int load_value) {
+		awg_control.load_value(load_value);
+	}
+
+	public void clock_generator_control(int load_value) {
+		clock_generator_control.load_value(load_value);
+	}
+
+	public void cv_operation_mode(int load_value) {
+		cv_operation_mode_byte1.load_value(get_lower_byte(load_value));
+		cv_operation_mode_byte0.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_phase_ratio(int load_value) {
+		wave_phase_ratio_byte0.load_value(get_lower_byte(load_value));
+		wave_phase_ratio_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_size(int load_value) {
+		wave_size_byte0.load_value(get_lower_byte(load_value));
+		wave_size_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_index(int load_value) {
+		wave_index_byte0.load_value(get_lower_byte(load_value));
+		wave_index_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_address(int load_value) {
+		wave_address_byte0.load_value(get_lower_byte(load_value));
+		wave_address_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_level(int load_value) {
+		wave_level_byte0.load_value(get_lower_byte(load_value));
+		wave_level_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void wave_offset(int load_value) {
+		wave_offset_byte0.load_value(get_lower_byte(load_value));
+		wave_offset_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void option(int load_value) {
+		option_byte0.load_value(get_lower_byte(load_value));
+		option_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void modulo(int load_value) {
+		modulo_byte0.load_value(get_lower_byte(load_value));
+		modulo_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void clock_ticks(int load_value) {
+		clock_ticks_byte0.load_value(get_lower_byte(load_value));
+		clock_ticks_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void mark(int load_value) {
+		mark_byte0.load_value(get_lower_byte(load_value));
+		mark_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void space(int load_value) {
+		space_byte0.load_value(get_lower_byte(load_value));
+		space_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void dac_output(int load_value) {
+		dac_output_byte0.load_value(get_lower_byte(load_value));
+		dac_output_byte1.load_value(get_higher_bytes(load_value));
+	}
+
 	// create load strings
 
-	public String create_setup_string() {
+	public String create_scope_setup_string() {
 		String setup_string = "";
 
 		setup_string += make_load_string_for_register(time_base_clock_ticks_byte0);
@@ -462,21 +575,43 @@ public class Bitscope_registers {
 		return setup_string;
 	}
 
-	public String create_trigger_setup_string() {
-
+	public String create_awg_setup_string() {
 		String setup_string = "";
 
-		setup_string += make_load_string_for_register(Lower_voltage_range_byte0);
-		setup_string += make_load_string_for_register(Lower_voltage_range_byte1);
-		setup_string += make_load_string_for_register(Higher_voltage_range_byte0);
-		setup_string += make_load_string_for_register(Higher_voltage_range_byte1);
-		setup_string += make_load_string_for_register(Trigger_level_byte0);
-		setup_string += make_load_string_for_register(Trigger_level_byte1);
+		setup_string += make_load_string_for_register(awg_control);
+		setup_string += make_load_string_for_register(clock_generator_control);
+		setup_string += make_load_string_for_register(cv_operation_mode_byte0);
+		setup_string += make_load_string_for_register(cv_operation_mode_byte1);
+		
+		setup_string += make_load_string_for_register(wave_phase_ratio_byte0);
+		setup_string += make_load_string_for_register(wave_phase_ratio_byte1);
+		setup_string += make_load_string_for_register(wave_size_byte0);
+		setup_string += make_load_string_for_register(wave_size_byte1);
+		setup_string += make_load_string_for_register(wave_address_byte0);
+		setup_string += make_load_string_for_register(wave_address_byte1);
+		setup_string += make_load_string_for_register(wave_level_byte0);
+		setup_string += make_load_string_for_register(wave_level_byte1);
+		setup_string += make_load_string_for_register(wave_index_byte0);
+		setup_string += make_load_string_for_register(wave_index_byte1);
+		
+		setup_string += make_load_string_for_register(wave_offset_byte0);
+		setup_string += make_load_string_for_register(wave_offset_byte1);
+		setup_string += make_load_string_for_register(option_byte0);
+		setup_string += make_load_string_for_register(option_byte1);
+		setup_string += make_load_string_for_register(modulo_byte0);
+		setup_string += make_load_string_for_register(modulo_byte1);
+		setup_string += make_load_string_for_register(clock_ticks_byte0);
+		setup_string += make_load_string_for_register(clock_ticks_byte1);
+		setup_string += make_load_string_for_register(mark_byte0);
+		setup_string += make_load_string_for_register(mark_byte1);
+		setup_string += make_load_string_for_register(space_byte0);
+		setup_string += make_load_string_for_register(space_byte1);
+		setup_string += make_load_string_for_register(dac_output_byte0);
+		setup_string += make_load_string_for_register(dac_output_byte1);
 
 		return setup_string;
-
 	}
-
+	
 	public String create_eeprom_write_string() {
 		return String.format("[%02x]@[%02x]s[%02x]@[%02x]s", eeprom_address.getRegister_address(),
 				eeprom_address.getRegister_value(), eeprom_data.getRegister_address(), eeprom_data.getRegister_value());
@@ -490,7 +625,6 @@ public class Bitscope_registers {
 	public String create_print_string(Register to_print_register) {
 		return String.format("[%02x]@p", to_print_register.getRegister_address());
 	}
-
 
 	// private functions
 	private String make_load_string_for_register(Register register) {

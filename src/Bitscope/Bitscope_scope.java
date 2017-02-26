@@ -48,7 +48,7 @@ public class Bitscope_scope {
 		registers.load_Lower_voltage_range(0x5c2a);
 		registers.load_Higher_voltage_range(0x9f81);
 
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 		control.update_registers_command();
 	}
 
@@ -65,7 +65,7 @@ public class Bitscope_scope {
 			registers.load_value_in_Analog_channel_enable(0x02);
 		}
 
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 	}
 
 	public void set_analog_trigger_source(boolean channelA_not_channelB) {
@@ -75,7 +75,7 @@ public class Bitscope_scope {
 			registers.getSpock_option().set_bit(2);
 		}
 
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 	}
 
 	public void set_voltage_range(double high_peak_voltage, double low_peak_voltage) {
@@ -88,7 +88,7 @@ public class Bitscope_scope {
 		registers.load_Higher_voltage_range(voltage_registers_values[0]);
 		registers.load_Lower_voltage_range(voltage_registers_values[1]);
 
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 		control.update_registers_command();
 	}
 
@@ -96,7 +96,7 @@ public class Bitscope_scope {
 		this.trigger_voltage = trigger_voltage;
 		registers.load_Trigger_level(to_range_as_integer(this.trigger_voltage, -7.157, 10.816, 0, 65535));
 
-		control.update_trigger_levels_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 		control.update_registers_command();
 	}
 
@@ -108,7 +108,7 @@ public class Bitscope_scope {
 
 		registers.load_time_base_clock_ticks(this.timebase_value);
 
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 		control.update_registers_command();
 	}
 
@@ -143,7 +143,7 @@ public class Bitscope_scope {
 	private void load_chopped_parameters() {
 		set_registers_to_chopped();
 		registers.load_value_in_Analog_channel_enable(0x03);
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 	}
 
 	private void set_registers_to_chopped() {
@@ -155,7 +155,7 @@ public class Bitscope_scope {
 
 	private void load_single_channel_parameters() {
 		set_registers_to_single_channel();
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 	}
 
 	private void set_registers_to_single_channel() {
@@ -171,7 +171,7 @@ public class Bitscope_scope {
 
 	private byte[] single_channel_acquire_data() {
 		registers.load_in_counter_capture_address(((end_address + (3 * 4096)) - 1028) % (3 * 4096));
-		control.update_registers_on_bitscope();
+		control.update_scope_registers_on_bitscope();
 		control.update_registers_command();
 		return control.analog_memory_dump_operation();
 	}

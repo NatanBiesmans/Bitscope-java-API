@@ -25,13 +25,10 @@ public class Bitscope_scope {
 
 		// general
 		registers.load_dump_size(1028);
-		registers.load_value_in_Dump_mode(0x00);
 		registers.load_in_counter_capture_address(0x00);
 		registers.load_value_in_Trace_mode(0x00);
 		registers.load_post_trigger_capture(1028);
-		registers.load_value_in_Dump_channel(0x00);
 		registers.load_value_in_Buffer_mode(0x00);
-		registers.load_value_in_Analog_channel_enable(0x01);
 		registers.load_pre_trigger_capture(1);
 		registers.load_trigger_checking_delay_period(0);
 		registers.load_timeout(0x0a00);
@@ -55,6 +52,12 @@ public class Bitscope_scope {
 		control.update_registers_command();
 	}
 
+	public double[][] get_chopped_view_in_voltages() {
+		load_chopped_parameters();
+		control.delay_until_trigger_operation();
+		return read_data_and_give_voltages();
+	}
+
 	public void set_channel(Boolean channelA_not_channelB) {
 		if (channelA_not_channelB) {
 			registers.load_value_in_Analog_channel_enable(0x01);
@@ -64,15 +67,15 @@ public class Bitscope_scope {
 
 		control.update_registers_on_bitscope();
 	}
-	
-	public void set_analog_trigger_source(boolean channelA_not_channelB){
+
+	public void set_analog_trigger_source(boolean channelA_not_channelB) {
 		if (channelA_not_channelB) {
 			registers.getSpock_option().unset_bit(2);
 		} else {
 			registers.getSpock_option().set_bit(2);
 		}
 
-		control.update_registers_on_bitscope();;
+		control.update_registers_on_bitscope();
 	}
 
 	public void set_voltage_range(double high_peak_voltage, double low_peak_voltage) {
@@ -92,7 +95,8 @@ public class Bitscope_scope {
 	public void set_trigger(double trigger_voltage) {
 		this.trigger_voltage = trigger_voltage;
 		registers.load_Trigger_level(to_range_as_integer(this.trigger_voltage, -7.157, 10.816, 0, 65535));
-	
+
+		control.update_trigger_levels_on_bitscope();
 		control.update_registers_command();
 	}
 
@@ -109,23 +113,63 @@ public class Bitscope_scope {
 	}
 
 	public double[] get_view_in_voltages() {
-		initialise_request();
-
-		return process_data(acquire_data());
+		load_single_channel_parameters();
+		single_channel_initialise_request();
+		return process_data(single_channel_acquire_data());
 	}
 
-	public int get_sampeling_frequency(){
+	public int get_sampeling_frequency() {
 		return 1024 / this.timebase_value;
 	}
-	
+
 	// private acquisition functions
 
-	private void initialise_request() {
+	private byte[] dump_channel_A() {
+
+		return process_trace(control.request_chopped_channel_A_data());
+	}
+
+	private byte[] dump_channel_B() {
+
+		return process_trace(control.request_chopped_channel_B_data());
+	}
+
+	private double[][] read_data_and_give_voltages() {
+
+		double[][] processed_data = { process_data(dump_channel_A()), process_data(dump_channel_B()) };
+		return processed_data;
+	}
+
+	private void load_chopped_parameters() {
+		set_registers_to_chopped();
+		registers.load_value_in_Analog_channel_enable(0x03);
+		control.update_registers_on_bitscope();
+	}
+
+	private void set_registers_to_chopped() {
+
+		registers.load_value_in_Trace_mode(0x02);
+		registers.load_value_in_Dump_mode(0x00);
+		registers.load_value_in_Buffer_mode(0x01);
+	}
+
+	private void load_single_channel_parameters() {
+		set_registers_to_single_channel();
+		control.update_registers_on_bitscope();
+	}
+
+	private void set_registers_to_single_channel() {
+		registers.load_value_in_Trace_mode(0x00);
+		registers.load_value_in_Dump_mode(0x00);
+		registers.load_value_in_Buffer_mode(0x0);
+	}
+
+	private void single_channel_initialise_request() {
 		control.program_spock_registers_operation();
 		end_address = get_end_address_after_trace(control.delay_until_trigger_operation());
 	}
 
-	private byte[] acquire_data() {
+	private byte[] single_channel_acquire_data() {
 		registers.load_in_counter_capture_address(((end_address + (3 * 4096)) - 1028) % (3 * 4096));
 		control.update_registers_on_bitscope();
 		control.update_registers_command();
@@ -144,12 +188,11 @@ public class Bitscope_scope {
 		}
 
 		return processed_trace_in_voltages;
-
 	}
 
 	private byte[] process_trace(byte[] trace) {
 		byte[] processed_trace = null;
-		processed_trace = Arrays.copyOfRange(trace, 1, trace.length - 1);
+		processed_trace = Arrays.copyOfRange(trace, 32, trace.length - 32);
 		return processed_trace;
 	}
 

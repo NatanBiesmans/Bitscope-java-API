@@ -8,14 +8,16 @@ Check the Main.java in order to see the example code.
 The output of the scope is an array of doubles representing the voltages.
 
 Working:
-- print hex values of trace
+- get voltage graph array
 - select channel
 - Set voltage range
-- Set timebase
+- Set timebase => still a bit unreliable in setting diffirent timebases
+- Select trigger channel
+- get sample frequency
+- Chop channels => still needs a bit of love
 
 ToDo:
-- Set trigger_level
-- Chop channels
+- Set trigger_level => currently at zero-crossing
 
 Future functions
 - Function generator

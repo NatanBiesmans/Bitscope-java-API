@@ -23,7 +23,7 @@ public class Bitscope_registers {
 
 	private Register trace_mode = new Register(0x21, 0x00);
 
-	private Register counter_capture_byte0 = new Register(0x08, 0x00);	
+	private Register counter_capture_byte0 = new Register(0x08, 0x00);
 	private Register counter_capture_byte1 = new Register(0x09, 0x00);
 	private Register counter_capture_byte2 = new Register(0x0a, 0x00);
 
@@ -368,48 +368,48 @@ public class Bitscope_registers {
 	public void spock_set_trigger_source_to_analog_trigger() {
 		spock_option.set_bit(0);
 	}
-	
-	public void spock_set_trigger_bit_7_to_DD7(){
+
+	public void spock_set_trigger_bit_7_to_DD7() {
 		spock_option.unset_bit(1);
 		spock_option.unset_bit(2);
 	}
-	
-	public void spock_set_trigger_bit_7_to_comparator(){
+
+	public void spock_set_trigger_bit_7_to_comparator() {
 		spock_option.set_bit(1);
 		spock_option.unset_bit(2);
 	}
-	
-	public void spock_set_trigger_bit_7_to_event1(){
+
+	public void spock_set_trigger_bit_7_to_event1() {
 		spock_option.unset_bit(1);
 		spock_option.set_bit(2);
 	}
-	
-	public void spock_set_trigger_bit_7_to_event2(){
+
+	public void spock_set_trigger_bit_7_to_event2() {
 		spock_option.set_bit(1);
 		spock_option.set_bit(2);
 	}
-	
-	public void spock_set_page_select(boolean lower_not_higher){
-		if(lower_not_higher){
+
+	public void spock_set_page_select(boolean lower_not_higher) {
+		if (lower_not_higher) {
 			spock_option.unset_bit(3);
-		}else{
+		} else {
 			spock_option.set_bit(3);
 		}
 	}
-	
-	public void spock_set_edge_direction_true_to_false(){
+
+	public void spock_set_edge_direction_true_to_false() {
 		spock_option.set_bit(4);
 	}
 
-	public void spock_set_edge_direction_false_to_true(){
+	public void spock_set_edge_direction_false_to_true() {
 		spock_option.unset_bit(4);
 	}
-	
-	public void spock_set_trigger_to_level_sensitive(){
+
+	public void spock_set_trigger_to_level_sensitive() {
 		spock_option.unset_bit(5);
 	}
-	
-	public void spock_set_trigger_to_edge_sensitive(){
+
+	public void spock_set_trigger_to_edge_sensitive() {
 		spock_option.set_bit(5);
 	}
 	// create load strings
@@ -462,6 +462,20 @@ public class Bitscope_registers {
 		return setup_string;
 	}
 
+	public String create_trigger_setup_string() {
+
+		String setup_string = "";
+
+		setup_string += make_load_string_for_register(Lower_voltage_range_byte0);
+		setup_string += make_load_string_for_register(Lower_voltage_range_byte1);
+		setup_string += make_load_string_for_register(Higher_voltage_range_byte0);
+		setup_string += make_load_string_for_register(Higher_voltage_range_byte1);
+		setup_string += make_load_string_for_register(Trigger_level_byte0);
+		setup_string += make_load_string_for_register(Trigger_level_byte1);
+
+		return setup_string;
+
+	}
 
 	public String create_eeprom_write_string() {
 		return String.format("[%02x]@[%02x]s[%02x]@[%02x]s", eeprom_address.getRegister_address(),
@@ -477,11 +491,12 @@ public class Bitscope_registers {
 		return String.format("[%02x]@p", to_print_register.getRegister_address());
 	}
 
+
 	// private functions
 	private String make_load_string_for_register(Register register) {
-		if(register.get_update_pending()){
+		if (register.get_update_pending()) {
 			register.unset_update_pending();
-			return String.format("[%02x]@[%02x]s", register.getRegister_address(),register.getRegister_value());
+			return String.format("[%02x]@[%02x]s", register.getRegister_address(), register.getRegister_value());
 		} else {
 			return "";
 		}

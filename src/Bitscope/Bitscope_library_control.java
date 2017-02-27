@@ -1,5 +1,6 @@
 package Bitscope;
 import Serial.Comport_interface;
+import Bitscope_Machines.Bitscope_debugging;
 import Registers.Bitscope_registers;
 
 

@@ -1,5 +1,7 @@
-package Bitscope;
+package Bitscope_Machines;
 
+import Bitscope.Bitscope_control;
+import Bitscope.Bitscope_library_control;
 import Registers.Bitscope_registers;
 
 public class Bitscope_analog_function_generator {

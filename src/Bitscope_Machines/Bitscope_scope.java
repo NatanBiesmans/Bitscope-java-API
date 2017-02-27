@@ -1,7 +1,8 @@
-package Bitscope;
+package Bitscope_Machines;
 
 import java.util.Arrays;
 
+import Bitscope.Bitscope_control;
 import Bitscope.Bitscope_library_control;
 import Registers.Bitscope_registers;
 

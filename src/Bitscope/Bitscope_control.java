@@ -67,8 +67,12 @@ public class Bitscope_control {
 		comPort.send_string_and_wait_for_response_as_string(registers.create_scope_setup_string() + ">");
 	}
 
-	//choped scope operations
-	
+	public void update_logic_analyzer_registers_on_bitscope() {
+		comPort.send_string_and_wait_for_response_as_string(registers.create_logic_analyzer_string() + ">U");
+	}
+
+	// choped scope operations
+
 	public byte[] request_chopped_channel_A_data() {
 		registers.load_value_in_Dump_channel(0x00);
 		return comPort.send_string_and_wait_for_response_as_bytes(">" + registers.create_scope_setup_string() + "A");
@@ -78,23 +82,24 @@ public class Bitscope_control {
 		registers.load_value_in_Dump_channel(0x01);
 		return comPort.send_string_and_wait_for_response_as_bytes(">" + registers.create_scope_setup_string() + "A");
 	}
-	
-	//AWG operations
-	
+
+	// AWG operations
+
 	public void synthesize_awg() {
 		comPort.send_string_and_wait_for_response_as_string("Y");
 	}
+
 	public void translate_awg() {
 		comPort.send_string_and_wait_for_response_as_string("X");
 	}
+
 	public void generate_awg() {
 		comPort.send_string_and_wait_for_response_as_string("Z");
 	}
-	
+
 	public void update_awg_registers() {
 		comPort.send_string_and_wait_for_response_as_string(registers.create_awg_setup_string());
 	}
-	
 
 	// eeprom operations
 	public String read_eeprom(byte address) {

@@ -8,20 +8,21 @@ Check the Main.java in order to see the example code.
 The output of the scope is an array of doubles representing the voltages.
 
 Working:
-- get voltage graph array
-- select channel
-- Set voltage range
-- Set timebase => still a bit unreliable in setting diffirent timebases
-- Select trigger channel
-- get sample frequency
-- Chop channels => still needs a bit of love
+-scope
+	* get voltage graph array
+	* select channel
+	* Set voltage range
+	* Set timebase => still a bit unreliable in setting diffirent timebases
+	* Select trigger channel
+	* get sample frequency
+	* Chop channels => still needs a bit of love
 - Function generator
+- Logic analyzer
 
 ToDo:
 - Set trigger_level => currently at zero-crossing
 
 Future functions
-- Logic analyzer
 - IO control? unconfirmed functionality
 
 Special thanks to the creators of PiLab. Thanks to their program I was able to reverse engineer the undocumented register functions and commands in the bitscope micro.

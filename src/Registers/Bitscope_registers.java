@@ -63,6 +63,14 @@ public class Bitscope_registers {
 	private Register trigger_value_byte0 = new Register(0x44, 0x00);
 	private Register trigger_value_byte1 = new Register(0x45, 0x00);
 
+	private Register digital_channel = new Register(0x38, 0x00);
+
+	private Register dump_send_byte0 = new Register(0x44, 0x00);
+	private Register dump_send_byte1 = new Register(0x45, 0x00);
+
+	private Register dump_skip_byte0 = new Register(0x44, 0x00);
+	private Register dump_skip_byte1 = new Register(0x45, 0x00);
+
 	// ----EEPROM----------------------------------------------------------------------------
 	private Register eeprom_data = new Register(0x0f, 0x00);
 	private Register eeprom_address = new Register(0x10, 0x00);
@@ -397,6 +405,36 @@ public class Bitscope_registers {
 				.load_value(get_lower_byte(get_higher_bytes(get_higher_bytes(get_higher_bytes(load_value)))));
 	}
 
+	public void load_dump_send(int load_value) {
+		dump_send_byte0.load_value(get_lower_byte(load_value));
+		dump_send_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void load_dump_skip(int load_value) {
+		dump_skip_byte0.load_value(get_lower_byte(load_value));
+		dump_skip_byte1.load_value(get_higher_bytes(load_value));
+	}
+
+	public void load_digital_channel(int load_value) {
+		digital_channel.load_value(load_value);
+	}
+
+	public void set_trigger_mask_bit(int index) {
+		trigger_mask.set_bit(index);
+	}
+
+	public void unset_trigger_mask_bit(int index) {
+		trigger_mask.unset_bit(index);
+	}
+
+	public void set_trigger_logic_bit(int index) {
+		trigger_logic.set_bit(index);
+	}
+
+	public void unset_trigger_logic_bit(int index) {
+		trigger_logic.unset_bit(index);
+	}
+
 	// spock options: this is from the datasheet so I'm assuming its wrong
 
 	public void spock_set_trigger_source_to_digital_trigger() {
@@ -450,6 +488,7 @@ public class Bitscope_registers {
 	public void spock_set_trigger_to_edge_sensitive() {
 		spock_option.set_bit(5);
 	}
+
 	// AWG registers
 
 	public void awg_control(int load_value) {
@@ -582,7 +621,7 @@ public class Bitscope_registers {
 		setup_string += make_load_string_for_register(clock_generator_control);
 		setup_string += make_load_string_for_register(cv_operation_mode_byte0);
 		setup_string += make_load_string_for_register(cv_operation_mode_byte1);
-		
+
 		setup_string += make_load_string_for_register(wave_phase_ratio_byte0);
 		setup_string += make_load_string_for_register(wave_phase_ratio_byte1);
 		setup_string += make_load_string_for_register(wave_size_byte0);
@@ -593,7 +632,7 @@ public class Bitscope_registers {
 		setup_string += make_load_string_for_register(wave_level_byte1);
 		setup_string += make_load_string_for_register(wave_index_byte0);
 		setup_string += make_load_string_for_register(wave_index_byte1);
-		
+
 		setup_string += make_load_string_for_register(wave_offset_byte0);
 		setup_string += make_load_string_for_register(wave_offset_byte1);
 		setup_string += make_load_string_for_register(option_byte0);
@@ -611,7 +650,46 @@ public class Bitscope_registers {
 
 		return setup_string;
 	}
-	
+
+	public String create_logic_analyzer_string() {
+		String setup_string = "";
+
+		setup_string += make_load_string_for_register(trace_mode);
+		setup_string += make_load_string_for_register(dump_mode);
+		setup_string += make_load_string_for_register(dump_size_byte0);
+		setup_string += make_load_string_for_register(dump_size_byte1);
+		setup_string += make_load_string_for_register(buffer_mode);
+		setup_string += make_load_string_for_register(clock_scale_byte0);
+		setup_string += make_load_string_for_register(clock_scale_byte1);
+		setup_string += make_load_string_for_register(post_trigger_capture_byte0);
+		setup_string += make_load_string_for_register(post_trigger_capture_byte1);
+		setup_string += make_load_string_for_register(dump_channel);
+		setup_string += make_load_string_for_register(Analog_channel_enable);
+		setup_string += make_load_string_for_register(digital_channel);
+		setup_string += make_load_string_for_register(dump_send_byte0);
+		setup_string += make_load_string_for_register(dump_send_byte1);
+		setup_string += make_load_string_for_register(dump_skip_byte0);
+		setup_string += make_load_string_for_register(dump_skip_byte1);
+
+		setup_string += make_load_string_for_register(time_base_clock_ticks_byte0);
+		setup_string += make_load_string_for_register(time_base_clock_ticks_byte1);
+		setup_string += make_load_string_for_register(timeout_byte0);
+		setup_string += make_load_string_for_register(timeout_byte1);
+		setup_string += make_load_string_for_register(spock_option);
+
+		setup_string += make_load_string_for_register(trigger_intro_byte0);
+		setup_string += make_load_string_for_register(trigger_intro_byte1);
+
+		setup_string += make_load_string_for_register(trigger_outro_byte0);
+		setup_string += make_load_string_for_register(trigger_outro_byte1);
+
+		setup_string += make_load_string_for_register(trigger_logic);
+		setup_string += make_load_string_for_register(trigger_mask);
+
+		return setup_string;
+
+	}
+
 	public String create_eeprom_write_string() {
 		return String.format("[%02x]@[%02x]s[%02x]@[%02x]s", eeprom_address.getRegister_address(),
 				eeprom_address.getRegister_value(), eeprom_data.getRegister_address(), eeprom_data.getRegister_value());

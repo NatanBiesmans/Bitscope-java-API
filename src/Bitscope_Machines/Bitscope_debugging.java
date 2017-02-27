@@ -1,4 +1,4 @@
-package Bitscope;
+package Bitscope_Machines;
 
 import Registers.Bitscope_registers;
 import Serial.Comport_interface;

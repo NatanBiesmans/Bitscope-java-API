@@ -55,13 +55,8 @@ public class Bitscope_logic_analyzer {
 		}
 	}
 
-	public void initiate_logic_analyzer() {
-		initialise_logic_analyzer_registers();
-		control.update_logic_analyzer_registers_on_bitscope();
-	}
-
 	public byte[] get_logic_analyzer_trace() {
-
+		initiate_logic_analyzer();
 		control.program_spock_registers_operation();
 		int end_addres = get_end_address_after_trace(control.delay_until_trigger_operation());
 		registers.load_in_counter_capture_address(end_addres + 12288 - this.trace_size);
@@ -73,6 +68,11 @@ public class Bitscope_logic_analyzer {
 
 	private int frequency_to_ticks(double frequency) {
 		return (int) (1000000 / (frequency * 25));
+	}
+
+	private void initiate_logic_analyzer() {
+		initialise_logic_analyzer_registers();
+		control.update_logic_analyzer_registers_on_bitscope();
 	}
 
 	private void initialise_logic_analyzer_registers() {
@@ -112,7 +112,7 @@ public class Bitscope_logic_analyzer {
 		String end_address_strings = returned_string.substring(returned_string.length() - 6);
 		return Integer.parseInt(end_address_strings, 16);
 	}
-	
+
 	private byte[] process_trace(byte[] trace) {
 		byte[] processed_trace = null;
 		processed_trace = Arrays.copyOfRange(trace, 1, trace.length - 1);

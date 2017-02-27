@@ -13,87 +13,69 @@ public class Bitscope_analog_function_generator {
 	private double frequency_in_khz = 4;
 	private double peak_voltage = 3.3 / 2;
 	private double offset_voltage = 3.3 / 2;
+	private int awg_control = 0;
 
 	public Bitscope_analog_function_generator(Bitscope_library_control library_control) {
 		control = library_control.getControl();
 		registers = library_control.getRegisters();
-		registers.wave_level(0xffff);
-		registers.wave_offset(0x0000);
-
-		registers.awg_control(0x00);
-
-		initiate_awg();
+		disable_awg();
 	}
 
 	// awg control
 	public void enable_awg() {
-		registers.awg_control(0xc0);
+		this.awg_control = 0xc0;
 		initiate_awg();
 	}
 
 	public void disable_awg() {
-		registers.awg_control(0x00);
+		this.awg_control = 0x00;
+		initiate_awg();
+	}
+	
+	public void reinitialise_awg(){
 		initiate_awg();
 	}
 
 	// wave functions
 	public void set_waveform_to_sine() {
 		this.waveform = 0;
-		initiate_awg();
 	}
 
 	public void set_waveform_to_triangle() {
 		this.waveform = 1;
-		initiate_awg();
 	}
 
 	public void set_waveform_to_block() {
 		this.waveform = 3;
-		initiate_awg();
 	}
 
 	public void set_waveform_to_exponential() {
 		this.waveform = 2;
-		initiate_awg();
 	}
 
 	public void set_voltage(double peak_voltage) {
 
 		this.peak_voltage = peak_voltage;
 
-		double bs_level_voltage = this.peak_voltage + this.offset_voltage;
-		double bs_offset_voltage = this.offset_voltage - this.peak_voltage;
-		registers.wave_offset(to_range_as_integer(bs_offset_voltage, 0, 3.3, 0, 0xffff));
-		registers.wave_level(to_range_as_integer(bs_level_voltage, 0, 3.3, 0, 0xffff));
-
-		initiate_awg();
-
 	}
 
 	public void set_offset(double offset_voltage) {
 		this.offset_voltage = offset_voltage;
-
-		double bs_level_voltage = this.peak_voltage + this.offset_voltage;
-		double bs_offset_voltage = this.offset_voltage - this.peak_voltage;
-		registers.wave_offset(to_range_as_integer(bs_offset_voltage, 0, 3.3, 0, 0xffff));
-		registers.wave_level(to_range_as_integer(bs_level_voltage, 0, 3.3, 0, 0xffff));
-
-		initiate_awg();
 	}
 
 	// wave parameters
 	public void set_frequency(double signal_frequency_in_khz) {
 		this.frequency_in_khz = signal_frequency_in_khz;
-		initiate_awg();
 	}
 
 	public void set_symmetry(double symmetry) {
 		this.symmetry = symmetry;
-		initiate_awg();
 	}
 
 	// private functions
 	private void initiate_awg() {
+
+		registers.awg_control(this.awg_control);
 		registers.clock_generator_control(0x00);
 		registers.cv_operation_mode(this.waveform);
 		registers.wave_phase_ratio(symmetry_percentage_to_register_value(this.symmetry));
@@ -106,6 +88,11 @@ public class Bitscope_analog_function_generator {
 		registers.wave_index(0x0000);
 		registers.wave_address(0x0000);
 		registers.wave_phase_ratio(0x00083126);
+
+		double bs_level_voltage = this.peak_voltage + this.offset_voltage;
+		double bs_offset_voltage = this.offset_voltage - this.peak_voltage;
+		registers.wave_offset(to_range_as_integer(bs_offset_voltage, 0, 3.3, 0, 0xffff));
+		registers.wave_level(to_range_as_integer(bs_level_voltage, 0, 3.3, 0, 0xffff));
 
 		control.update_awg_registers();
 		control.translate_awg();

@@ -5,8 +5,6 @@
 Currently the API is in alpha. This means there are quite a lot of bugs, missing functionalities and of cource incomplete code.
 
 Check the Main.java in order to see the example code.
-The output of the scope is an array of doubles representing the voltages.
-
 Working:
 -scope
 	* get voltage graph array

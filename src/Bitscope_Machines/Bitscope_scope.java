@@ -10,9 +10,16 @@ public class Bitscope_scope {
 	Bitscope_control control;
 	Bitscope_registers registers;
 
-	double higher_range_voltage;
-	double lower_range_voltage;
-	double trigger_voltage;
+	double higher_range_voltage = 5;
+	double lower_range_voltage = -5;
+	double trigger_voltage = 0;
+	boolean channel_a_not_b = true;
+	boolean trigger_channel_a_not_b = true;
+	int trace_size = 1024;
+
+	int dump_mode = 0x00;
+	int trace_mode = 0x00;
+	int buffer_mode = 0x00;
 
 	int min_timebase = 15;
 	int max_timebase = 535;
@@ -23,82 +30,33 @@ public class Bitscope_scope {
 	public Bitscope_scope(Bitscope_library_control library_control) {
 		control = library_control.getControl();
 		registers = library_control.getRegisters();
-
-		// general
-		registers.load_dump_size(1028);
-		registers.load_in_counter_capture_address(0x00);
-		registers.load_value_in_Trace_mode(0x00);
-		registers.load_post_trigger_capture(1028);
-		registers.load_value_in_Buffer_mode(0x00);
-		registers.load_pre_trigger_capture(1);
-		registers.load_trigger_checking_delay_period(0);
-		registers.load_timeout(0x0a00);
-		registers.load_time_base_clock_ticks(40);
-		registers.load_clock_scale(1);
-		registers.load_iterations(1);
-
-		// triggers
-		registers.load_value_in_Trigger_mask(0x7f);
-		registers.load_value_in_Trigger_logic(0x80);
-		registers.load_trigger_intro(4);
-		registers.load_trigger_outro(4);
-		registers.load_trigger_value(0);
-		registers.load_Trigger_level(32000);
-
-		// range and span
-		registers.load_Lower_voltage_range(0x5c2a);
-		registers.load_Higher_voltage_range(0x9f81);
-
-		control.update_scope_registers_on_bitscope();
-		control.update_registers_command();
 	}
 
 	public double[][] get_chopped_view_in_voltages() {
 		load_chopped_parameters();
+		initiate_scope();
 		control.delay_until_trigger_operation();
 		return read_data_and_give_voltages();
 	}
 
 	public void set_channel(Boolean channelA_not_channelB) {
-		if (channelA_not_channelB) {
-			registers.load_value_in_Analog_channel_enable(0x01);
-		} else {
-			registers.load_value_in_Analog_channel_enable(0x02);
-		}
-
-		control.update_scope_registers_on_bitscope();
+		this.channel_a_not_b = channelA_not_channelB;
 	}
 
 	public void set_analog_trigger_source(boolean channelA_not_channelB) {
-		if (channelA_not_channelB) {
-			registers.getSpock_option().unset_bit(2);
-		} else {
-			registers.getSpock_option().set_bit(2);
-		}
-
-		control.update_scope_registers_on_bitscope();
+		this.trigger_channel_a_not_b = channelA_not_channelB;
 	}
 
 	public void set_voltage_range(double high_peak_voltage, double low_peak_voltage) {
-		higher_range_voltage = high_peak_voltage;
+		this.higher_range_voltage = high_peak_voltage;
+		this.lower_range_voltage = low_peak_voltage;
 
-		double scale = high_peak_voltage - low_peak_voltage;
-		double offset = low_peak_voltage + (scale / 2);
-
-		int[] voltage_registers_values = to_span(offset, scale);
-		registers.load_Higher_voltage_range(voltage_registers_values[0]);
-		registers.load_Lower_voltage_range(voltage_registers_values[1]);
-
-		control.update_scope_registers_on_bitscope();
-		control.update_registers_command();
 	}
 
 	public void set_trigger(double trigger_voltage) {
 		this.trigger_voltage = trigger_voltage;
 		registers.load_Trigger_level(to_range_as_integer(this.trigger_voltage, -7.157, 10.816, 0, 65535));
 
-		control.update_scope_registers_on_bitscope();
-		control.update_registers_command();
 	}
 
 	public void set_timebase(double new_timebase_in_milliseconds) {
@@ -107,14 +65,11 @@ public class Bitscope_scope {
 		new_timebase_in_milliseconds /= 1024 * 25 * 0.000001;
 		this.timebase_value = (int) new_timebase_in_milliseconds;
 
-		registers.load_time_base_clock_ticks(this.timebase_value);
-
-		control.update_scope_registers_on_bitscope();
-		control.update_registers_command();
 	}
 
 	public double[] get_view_in_voltages() {
 		load_single_channel_parameters();
+		initiate_scope();
 		single_channel_initialise_request();
 		return process_data(single_channel_acquire_data());
 	}
@@ -144,25 +99,29 @@ public class Bitscope_scope {
 	private void load_chopped_parameters() {
 		set_registers_to_chopped();
 		registers.load_value_in_Analog_channel_enable(0x03);
-		control.update_scope_registers_on_bitscope();
 	}
 
 	private void set_registers_to_chopped() {
-
-		registers.load_value_in_Trace_mode(0x02);
-		registers.load_value_in_Dump_mode(0x00);
-		registers.load_value_in_Buffer_mode(0x01);
+		this.trace_mode = 0x02;
+		this.dump_mode = 0x00;
+		this.buffer_mode = 0x01;
 	}
 
 	private void load_single_channel_parameters() {
 		set_registers_to_single_channel();
-		control.update_scope_registers_on_bitscope();
+
+		if (this.channel_a_not_b) {
+			registers.load_value_in_Analog_channel_enable(0x01);
+		} else {
+			registers.load_value_in_Analog_channel_enable(0x02);
+		}
 	}
 
 	private void set_registers_to_single_channel() {
-		registers.load_value_in_Trace_mode(0x00);
-		registers.load_value_in_Dump_mode(0x00);
-		registers.load_value_in_Buffer_mode(0x0);
+		this.trace_mode = 0x00;
+		this.dump_mode = 0x00;
+		this.buffer_mode = 0x00;
+
 	}
 
 	private void single_channel_initialise_request() {
@@ -184,7 +143,8 @@ public class Bitscope_scope {
 		int sample_index = 0;
 		for (byte sample : acquired_trace) {
 			processed_trace_in_voltages[sample_index] = to_range_as_double((double) (sample & 0xff) - 127, 0, 255,
-					lower_range_voltage * 2, higher_range_voltage * 2);
+					lower_range_voltage, higher_range_voltage);
+			processed_trace_in_voltages[sample_index] += (this.higher_range_voltage - this.lower_range_voltage) / 2;
 			sample_index++;
 		}
 
@@ -213,11 +173,16 @@ public class Bitscope_scope {
 		double register_size = 65536;
 
 		double normalised_range = 18.3;
-		double normalised_offset = 0.412;
+		//double normalised_offset = 0.412;
+		double normalised_offset = 0.41;
+		
+		double high_ad_ref_voltage = (normalised_offset + offset / normalised_range) + (scale / normalised_range) / 2;
+		double low_ad_ref_voltage = (normalised_offset + offset / normalised_range) - (scale / normalised_range) / 2;
 
-		double high_ad_ref_voltage = (normalised_offset - offset / normalised_range) + (scale / normalised_range) / 2;
-		double low_ad_ref_voltage = (normalised_offset - offset / normalised_range) - (scale / normalised_range) / 2;
-
+//		System.out.println(high_ad_ref_voltage);
+//		System.out.println(low_ad_ref_voltage);
+		
+		
 		double da_impedance_high = 2 * high_ad_ref_voltage;
 		da_impedance_high = minimum_impedance + impedance_scaling * da_impedance_high * da_impedance_high;
 
@@ -264,6 +229,62 @@ public class Bitscope_scope {
 		double slope_coef = (double) (upper_limit_of_output_value - lower_limit_of_output_value)
 				/ (upper_limit_of_to_convert_value - lower_limit_of_to_convert_value);
 		return lower_limit_of_output_value + (int) (slope_coef * (to_convert_value - lower_limit_of_to_convert_value));
+	}
+
+	private void initiate_scope() {
+		// general
+		registers.load_dump_size(this.trace_size + 4);
+		registers.load_in_counter_capture_address(0x00);
+		registers.load_value_in_Trace_mode(0x00);
+		registers.load_post_trigger_capture(this.trace_size + 4);
+		registers.load_value_in_Buffer_mode(0x00);
+		registers.load_pre_trigger_capture(1);
+		registers.load_trigger_checking_delay_period(0);
+		registers.load_timeout(0x0a00);
+		registers.load_time_base_clock_ticks(this.timebase_value);
+		registers.load_clock_scale(1);
+		registers.load_iterations(1);
+
+		// triggers
+		registers.load_value_in_Trigger_mask(0x7f);
+		registers.load_value_in_Trigger_logic(0x80);
+		registers.load_trigger_intro(4);
+		registers.load_trigger_outro(4);
+		registers.load_trigger_value(0);
+		registers.load_Trigger_level(32000);
+
+		if (this.trigger_channel_a_not_b) {
+			registers.getSpock_option().unset_bit(2);
+		} else {
+			registers.getSpock_option().set_bit(2);
+		}
+
+		// range and span
+		double scale = this.higher_range_voltage - this.lower_range_voltage;
+		double offset = this.lower_range_voltage + (scale / 2);
+
+//		System.out.println(offset);
+//		System.out.println(scale);
+		
+		int[] voltage_registers_values = to_span(offset, scale);
+		
+//		System.out.println(String.format("%02x",voltage_registers_values[0]));
+//		System.out.println(String.format("%02x",voltage_registers_values[1]));
+		
+		registers.load_Higher_voltage_range(voltage_registers_values[0]);
+		registers.load_Lower_voltage_range(voltage_registers_values[1]);
+
+		// trace dependent
+
+		registers.load_value_in_Trace_mode(this.trace_mode);
+		registers.load_value_in_Dump_mode(this.dump_mode);
+		registers.load_value_in_Buffer_mode(this.buffer_mode);
+
+		// upload
+
+		control.update_scope_registers_on_bitscope();
+		control.update_registers_command();
+
 	}
 
 }

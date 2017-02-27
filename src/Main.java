@@ -47,9 +47,9 @@ public class Main {
 		scope.set_trigger(2); // Doesn't work yet ... waiting a bit for a fresh
 								// view
 
-		double[] samples = scope.get_view_in_voltages();
+		double[] scope_samples = scope.get_view_in_voltages();
 
-		for (double sample : samples) {
+		for (double sample : scope_samples) {
 			System.out.println(sample);
 		}
 

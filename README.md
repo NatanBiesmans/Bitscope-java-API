@@ -6,14 +6,13 @@ Currently the API is in alpha. This means there are quite a lot of bugs, missing
 
 Check the Main.java in order to see the example code.
 Working:
--scope
-	* get voltage graph array
-	* select channel
-	* Set voltage range
-	* Set timebase => still a bit unreliable in setting diffirent timebases
-	* Select trigger channel
-	* get sample frequency
-	* Chop channels => still needs a bit of love
+- get voltage graph array
+- select channel
+- Set voltage range
+- Set timebase => still a bit unreliable in setting diffirent timebases
+- Select trigger channel
+- get sample frequency
+- Chop channels => still needs a bit of love
 - Function generator
 - Logic analyzer
 
@@ -22,5 +21,3 @@ ToDo:
 
 Future functions
 - IO control? unconfirmed functionality
-
-Special thanks to the creators of PiLab. Thanks to their program I was able to reverse engineer the undocumented register functions and commands in the bitscope micro.

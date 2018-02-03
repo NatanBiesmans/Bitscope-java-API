@@ -16,8 +16,4 @@ Working:
 - Function generator
 - Logic analyzer
 
-ToDo:
-- Set trigger_level => currently at zero-crossing
-
-Future functions
-- IO control? unconfirmed functionality
+Triggering is stil not working correctly.
